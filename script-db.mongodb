@@ -1,0 +1,110 @@
+db.utenti.insertOne(
+    {
+        nominativo: "Roberto Forti",
+        indirizzo: "Viale Europa, 55",
+        CAP: "47921",
+        localita: "Rimini",
+        provincia: "RN",
+        telefono: "+393471029384",
+        mail: "roberto.forti@example.com"
+    }
+);
+
+db.utenti.find(
+   {
+       localita:"Rimini"
+   }
+);
+
+db.utenti.insertMany([
+    {
+        nominativo: "Mario Rossi",
+        indirizzo: "Via Roma, 10",
+        CAP: "00100",
+        localita: "Roma",
+        provincia: "RM",
+        telefono: "+393331234567",
+        mail: "mario.rossi@example.com"
+    },
+    {
+        nominativo: "Giulia Bianchi",
+        indirizzo: "Piazza Duomo, 5",
+        CAP: "20121",
+        localita: "Milano",
+        provincia: "MI",
+        telefono: "+393479876543",
+        mail: "giulia.bianchi@example.com"
+    },
+    {
+        nominativo: "Luca Verdi",
+        indirizzo: "Corso Italia, 25",
+        CAP: "80100",
+        localita: "Napoli",
+        provincia: "NA",
+        telefono: "+393285551122",
+        mail: "luca.verdi@example.com"
+    },
+    {
+        nominativo: "Anna Neri",
+        indirizzo: "Via della Libertà, 3",
+        CAP: "90143",
+        localita: "Palermo",
+        provincia: "PA",
+        telefono: "+393397778899",
+        mail: "anna.neri@example.com"
+    },
+    {
+        nominativo: "Marco Gialli",
+        indirizzo: "Viale Stazione, 1",
+        CAP: "50123",
+        localita: "Firenze",
+        provincia: "FI",
+        telefono: "+393452223344",
+        mail: "marco.gialli@example.com"
+    },
+    {
+        nominativo: "Elena Blu",
+        indirizzo: "Via Po, 40",
+        CAP: "10121",
+        localita: "Torino",
+        provincia: "TO",
+        telefono: "+393661110099",
+        mail: "elena.blu@example.com"
+    },
+    {
+        nominativo: "Paolo Marroni",
+        indirizzo: "Lungomare, 15",
+        CAP: "70121",
+        localita: "Bari",
+        provincia: "BA",
+        telefono: "+393354445566",
+        mail: "paolo.marroni@example.com"
+    },
+    {
+        nominativo: "Sara Rosa",
+        indirizzo: "Via Garibaldi, 8",
+        CAP: "40121",
+        localita: "Bologna",
+        provincia: "BO",
+        telefono: "+393290001122",
+        mail: "sara.rosa@example.com"
+    },
+    {
+        nominativo: "Davide Viola",
+        indirizzo: "Ponte Vecchio, 2",
+        CAP: "30121",
+        localita: "Venezia",
+        provincia: "VE",
+        telefono: "+393406667788",
+        mail: "davide.viola@example.com"
+    },
+    {
+        nominativo: "Laura Argento",
+        indirizzo: "Via Cavour, 7",
+        CAP: "16121",
+        localita: "Genova",
+        provincia: "GE",
+        telefono: "+393389990011",
+        mail: "laura.argento@example.com"
+    }
+])
