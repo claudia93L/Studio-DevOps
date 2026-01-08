@@ -55,3 +55,47 @@ Resources:
       DefaultActions:
         - Type: forward
           TargetGroupArn: !Ref ApplicationALBTargetGroup
+
+  LaunchTemplate1:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData:
+        ImageId: ami-0c55b159cbfafe1f0 # Amazon Linux 2 AMI (HVM), SSD Volume Type
+        InstanceType: t3.micro
+        UserData:
+          Fn::Base64: |
+            #!/bin/bash
+            yum update -y
+            yum install -y httpd
+            systemctl start httpd
+            systemctl enable httpd
+            echo "Hello from $(hostname -f). The server works!" > /var/www/html/index.html
+        TagSpecifications:
+          - ResourceType: instance
+            Tags:
+              - Key: Name
+                Value: MyAppInstance
+
+  AutoscalingGroup1:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      VPCZoneIdentifier:
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
+      LaunchTemplate:
+        LaunchTemplateId: !Ref LaunchTemplate1
+        Version: !GetAtt LaunchTemplate1.LatestVersionNumber
+      MinSize: 2
+      MaxSize: 6
+      DesiredCapacity: 2
+      TargetGroupARNs:
+        - !Ref ApplicationALBTargetGroup
+      Tags:
+        - Key: Name
+          Value: MyAppAutoScalingGroup
+          PropagateAtLaunch: true
+
+Outputs:
+  LoadBalancerDNSName:
+    Description: DNS Name of the Application Load Balancer
+    Value: !GetAtt ApplicationLoadBalancer.DNSName

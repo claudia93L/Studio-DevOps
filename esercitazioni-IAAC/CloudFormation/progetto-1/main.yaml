@@ -1,0 +1,93 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Monitoring EC2 Instance with CloudWatch
+
+Parameters:
+  PublicSubnet1:
+    Type: String
+    Description: Subnet ID for the first public subnet
+  PublicSubnet2:
+    Type: String
+    Description: Subnet ID for the second public subnet
+  ALBSecurityGroup:
+    Type: String
+    Description: Security Group ID for the Application Load Balancer
+  AutoscalingGroup1:
+    Type: String
+    Description: Name of the AutoScaling Group to monitor
+
+Resources:
+  ALBAccessLogsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: myapp-alb-logs
+      VersioningConfiguration:
+        Status: Enabled
+      Tags:
+        - Key: Name
+          Value: ALBAccessLogs
+
+  ApplicationLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Subnets:
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
+      SecurityGroups:
+        - !Ref ALBSecurityGroup
+      AccessLogs:
+        S3BucketName: !Ref ALBAccessLogsBucket
+        Enabled: true
+        S3BucketPrefix: alb-logs/
+      Tags:
+        - Key: Name
+          Value: MyAppLoadBalancer
+
+  EC2HighCPUAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: EC2HighCPU
+      AlarmDescription: 'Allerta se CPU EC2 supera 80% per 10 minuti'
+      Namespace: AWS/EC2
+      MetricName: CPUUtilization
+      Statistic: Average
+      Period: 300 # 5 minuti
+      EvaluationPeriods: 2 # 2 x 5min = 10 minuti
+      Threshold: 80
+      ComparisonOperator: GreaterThanThreshold
+      AlarmActions:
+        - !Ref MonitoringSNSTopic
+      OKActions:
+        - !Ref MonitoringSNSTopic
+      Dimensions:
+        - Name: AutoScalingGroupName
+          Value: !Ref AutoscalingGroup1
+      TreatMissingData: notBreaching
+      Tags:
+        - Key: Name
+          Value: EC2HighCPUAlarm
+
+  MonitoringSNSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: MyAppMonitoringTopic
+      DisplayName: MyApp Monitoring Alerts
+      Tags:
+        - Key: Name
+          Value: MonitoringSNSTopic
+
+  MonitoringEmailSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref MonitoringSNSTopic
+      Protocol: email
+      Endpoint: fake-email@example.com
+      Tags:
+        - Key: Name
+          Value: MonitoringEmailSubscription
+
+  MonitoringSMSSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref MonitoringSNSTopic
+      Protocol: sms
+      Endpoint: '+391234567890'
